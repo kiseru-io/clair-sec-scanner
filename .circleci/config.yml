@@ -1,0 +1,30 @@
+version: 2
+jobs:
+  package:
+    working_directory: ~/app
+    docker:
+      - image: docker:17.09.0-ce-dind
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build and package toolkit 
+          command: docker build -t kiseruio/clair-sec-scanner:$CIRCLE_SHA1 -t kiseruio/clair-sec-scanner:latest .
+      - run:
+          name: DockerHub login
+          command: echo $DOCKERHUB_PWD | docker login --username $DOCKERHUB_ID --password-stdin
+      - run:
+          name: Publish container to DockerHub
+          command: docker images && docker push $DOCKERHUB_ID/clair-sec-scanner:$CIRCLE_SHA1 && docker push kiseruio/clair-sec-scanner:latest
+
+workflows:
+  version: 2
+  build-pipeline:
+    jobs:
+      - package:
+          context: org.kiseru.io
+          filters:
+            branches:
+              only:
+                - master
+

@@ -1,0 +1,25 @@
+version: "3.2"
+services:
+  db:
+    image: arminc/clair-db:latest
+    ports:
+      - "5432:5432"
+
+  clair:
+    image: arminc/clair-local-scan:v2.0.1
+    depends_on:
+      - db
+    links:
+      - "db:postgres"
+    ports:
+      - "6060:6060"
+
+  clair-scanner:
+    image: kiseruio/clair-sec-scanner:latest
+    depends_on:
+      - clair
+    ports:
+      - "9279:9279"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: clair-scanner --ip clair-scanner --clair=http://clair:6060 -t High ${IMAGE} 
