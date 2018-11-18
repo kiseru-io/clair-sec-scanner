@@ -2,7 +2,8 @@ FROM debian:stretch-slim
 
 MAINTAINER kiseru.io
 
-ENV DOCKER_API_VERSION=1.34
+# https://docs.docker.com/develop/sdk/#docker-ee-and-ce-api-mismatch
+ENV DOCKER_API_VERSION=1.37
 
 EXPOSE 9279
 
