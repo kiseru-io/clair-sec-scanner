@@ -1,0 +1,59 @@
+version: 2.1
+
+description: |
+  Run the Clair Secure Image Scanning tool 
+
+examples:
+  scan_my_image:
+    description: Pull the desired Docker image and test
+    usage:
+      version: 2.1
+
+      orbs:
+        clair-orb: kiseru-io/clair-orb@0.0.1
+
+      workflows:
+        scan_my_image:
+          jobs:
+            - clair-orb/scan:
+                image: myimagerepo/myimage:SHA1      # Full image path and tag
+                failOn: High                         # Warning | High | Critical - fail if this severity is found
+                dbtag: latest                        # Clairdb tag to use 
+
+executors:
+  default:
+    docker:
+      - image: circleci/buildpack-deps
+
+commands:
+  scan:
+    description: "Scan a docker image using Clair"
+    parameters:
+      image:
+        type: string
+        description: Full image name in repo/name:tag format  
+                     e.g. nginx/nginx:latest
+        default: "" 
+      failOn:
+        type: string
+        description: The severity of vulnerability to fail the build on
+        default: "High"
+      dbtag:
+        description: A Clair DB image tag (default = latest)
+        type: string
+        default: "latest"
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Get Docker Compose Clair config 
+          command: "curl https://raw.githubusercontent.com/kiseru-io/clair-sec-scanner/master/docker-compose.yml -o docker-compose.yml"
+      - run:
+          name: Pull Image to Scan 
+          command: "docker pull << parameters.image >>"
+      - run:
+          name: Run Scan                         
+          command: |
+            IMAGE=<< parameters.image >> docker-compose up -d
+            IMAGE=<< parameters.image >> docker-compose run clair-scanner
+
