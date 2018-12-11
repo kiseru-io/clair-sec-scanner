@@ -22,4 +22,4 @@ services:
       - "9279:9279"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    command: clair-scanner --ip clair-scanner --clair=http://clair:6060 -t Critical ${IMAGE} 
+    command: clair-scanner --ip clair-scanner --clair=http://clair:6060 -t ${LEVEL:-Critical} ${IMAGE} 

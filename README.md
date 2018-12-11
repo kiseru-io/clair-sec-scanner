@@ -6,6 +6,12 @@ Run a security scan in a single command
 ```
 IMAGE=nginx:latest docker-compose run clair-scanner
 ```
+Default failure is for Critical. If you want to fail the build at a lower level, you can set the LEVEL e.g. Low | Medium | High | Critical
+
+```
+IMAGE=nginx:latest LEVEL=High docker-compose run clair-scanner
+```
+
 
 ### CircleCI
 
