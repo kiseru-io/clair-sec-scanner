@@ -1,4 +1,4 @@
-FROM debian:stretch-slim
+FROM debian:8-slim
 
 MAINTAINER kiseru.io
 
@@ -10,7 +10,8 @@ EXPOSE 9279
 # install docker engine
 RUN apt-get update && apt-get dist-upgrade -y && \
     apt-get install  --no-install-suggests apt-transport-https ca-certificates gnupg curl -y && \
-    sh -c "echo deb https://apt.dockerproject.org/repo debian-jessie main > /etc/apt/sources.list.d/docker.list" && \
+    sh -c "echo deb https://apt.dockerproject.org/repo debian-jessie main > /etc/apt/sources.list.d/docker.list" && \ 
+    apt-key adv --list-public-keys --with-fingerprint --with-colons && \
     apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D && \
     apt-get update && \
     apt-cache policy docker-engine && \
