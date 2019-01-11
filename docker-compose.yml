@@ -22,5 +22,4 @@ services:
       - "9279:9279"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - .:/app/:ro 
-    command: clair-scanner --ip clair-scanner --clair=http://clair:6060 -t ${LEVEL:-Critical} -w ${WHITELIST:-/app/cve-whitelist.yaml} ${IMAGE} 
+    command: clair-scanner --ip clair-scanner --clair=http://clair:6060 -t ${LEVEL:-Critical} ${IMAGE} 
