@@ -19,7 +19,7 @@ RUN apt-get update && apt-get dist-upgrade -y && \
 
 # add clair-scanner binary
 RUN curl -ksL https://github.com/arminc/clair-scanner/releases/download/v8/clair-scanner_linux_amd64 -o /usr/local/bin/clair-scanner && \
-    chmod +x /usr/local/bin/clair-scanner
+    chmod +x /usr/local/bin/clair-scanner && touch /usr/local/default-whitelist.yaml
 
 # override with docker-compose
 CMD []
