@@ -21,7 +21,7 @@ services:
       - "6060:6060"
 
   clair-scanner:
-    image: kiseruio/clair-sec-scanner:latest
+    image: kiseruio/clair-sec-scanner:1.0.0
     depends_on:
       - clair
     ports:

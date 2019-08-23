@@ -9,13 +9,13 @@ jobs:
       - setup_remote_docker
       - run:
           name: Build and package toolkit 
-          command: docker build -t kiseruio/clair-sec-scanner:$CIRCLE_SHA1 -t kiseruio/clair-sec-scanner:latest .
+          command: docker build -t kiseruio/clair-sec-scanner:$CIRCLE_SHA1 -t kiseruio/clair-sec-scanner:latest -t  kiseruio/clair-sec-scanner:1.0.0 .
       - run:
           name: DockerHub login
           command: echo $DOCKERHUB_PWD | docker login --username $DOCKERHUB_ID --password-stdin
       - run:
           name: Publish container to DockerHub
-          command: docker images && docker push $DOCKERHUB_ID/clair-sec-scanner:$CIRCLE_SHA1 && docker push kiseruio/clair-sec-scanner:latest
+          command: docker images && docker push $DOCKERHUB_ID/clair-sec-scanner:$CIRCLE_SHA1 && docker push kiseruio/clair-sec-scanner:latest && docker push kiseruio/clair-sec-scanner:1.0.0
 
 workflows:
   version: 2
