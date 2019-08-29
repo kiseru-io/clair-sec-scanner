@@ -37,5 +37,5 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${PWD}/cve-whitelist.yaml:/usr/local/cve-whitelist.yaml:ro
-    command: clair-scanner --ip clair-scanner --clair=http://clair:6060 -t ${LEVEL:-Critical} -w /usr/local/cve-whitelist.yaml ${IMAGE}
+    command: clair-scanner --ip clair-scanner --clair=http://clair:6060 -t ${LEVEL:-Critical} -w ${WHITELIST:-/usr/local/cve-whitelist.yaml} ${IMAGE}
 

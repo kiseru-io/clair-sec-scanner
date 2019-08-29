@@ -18,16 +18,7 @@ When running with docker-compose up ensure that you're using the --abort-on-cont
 LEVEL=High IMAGE=node:lts-slim docker-compose up --force-recreate --abort-on-container-exit
 ```
 
-### CVE Whitelisting
-If you wish to whitelist and ignore a CVE, the scanner looks for a whitelist file named cve-whitelist.yaml stored in the current working directory. The format is:
-
-```
-generalwhitelist: 
-  CVE-2018-15686: imagemagic    # Critical
-  CVE-2019-12834: some libc bug # High 
-
-```
-If no cve-whitelist.yaml file exists, an empty example one will be created by default.
+docker cp ./cve-whitelist.yaml $(IMAGE=mmodevdexregistry.azurecr.io/sds-fa-service:690d45058aa7455bd3e626773fa1ab2761912e7d LEVEL=High docker-compose -f docker-compose-clair.yml ps -q clair-scanner):/tmp/cve-whitelist.yaml
 
 
 ### CircleCI
@@ -40,7 +31,7 @@ Add a section to your config.yml such as:
       - image: circleci/buildpack-deps
 
     environment:
-      DOCKER_IMAGE_NAME: nginx 
+      DOCKER_IMAGE_NAME: nginx
 
     steps:
       - checkout
@@ -53,6 +44,45 @@ Add a section to your config.yml such as:
             IMAGE=$DOCKER_IMAGE_NAME:$CIRCLE_SHA1 docker-compose run clair-scanner
 
 ```
+
+### CVE Whitelisting
+If you wish to whitelist and ignore a CVE, the scanner looks for a whitelist file named cve-whitelist.yaml stored in the current working directory. The format is:
+
+```
+generalwhitelist:
+  CVE-2018-15686: imagemagic    # Critical
+  CVE-2019-12834: some libc bug # High
+
+```
+If no cve-whitelist.yaml file exists, an empty example one will be created by default.
+
+### CircleCI and CVE Whitelisting
+If you wish to whitelist using CircleCI and require the use of a docker executor, you may be aware that CircleCI does not support mounting the host volume, and therfore the only way to provide the whitelist file is to use a docker copy. If this is the case, your circleci config may look similar to:
+
+```
+  run-clair:
+    docker:
+      - image: circleci/buildpack-deps
+
+    environment:
+      DOCKER_IMAGE_NAME: nginx
+
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Run Security Test suite
+          command: |
+            docker pull $DOCKER_IMAGE_NAME:$CIRCLE_SHA1
+            curl https://raw.githubusercontent.com/kiseru-io/clair-sec-scanner/master/docker-compose.yml -o docker-compose.yml
+            docker cp ./cve-whitelist.yaml $(IMAGE=nginx:latest docker-compose ps -q clair-scanner):/tmp/cve-whitelist.yaml
+            IMAGE=$DOCKER_IMAGE_NAME:$CIRCLE_SHA1 WHITELIST=/tmp/cve-whitelist.yaml docker-compose up --abort-on-container-exit
+
+```
+
+For further info see:
+- https://circleci.com/docs/2.0/building-docker-images/#mounting-folders
+
 
 ### CircleCI Orb
 TODO:
