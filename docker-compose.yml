@@ -24,8 +24,8 @@ services:
   timeout:
     image: busybox
     volumes:
-      - ${PWD}:/tmp
-    command: sh -c "touch /tmp/cve-whitelist.yaml && sleep 300"
+      - configs:/cfg
+    command: sh -c "sleep 300"
 
   clair-scanner:
     image: kiseruio/clair-sec-scanner:1.0.0
@@ -36,6 +36,9 @@ services:
       - "9279:9279"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ${PWD}/cve-whitelist.yaml:/usr/local/cve-whitelist.yaml:ro
-    command: clair-scanner --ip clair-scanner --clair=http://clair:6060 -t ${LEVEL:-Critical} -w ${WHITELIST:-/usr/local/cve-whitelist.yaml} ${IMAGE}
+      - configs:/cfg
+    command: clair-scanner --ip clair-scanner --clair=http://clair:6060 -t ${LEVEL:-Critical} -w ${WHITELIST:-/usr/local/default-whitelist.yaml} ${IMAGE}
+
+volumes:
+  configs:
 
