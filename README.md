@@ -18,8 +18,6 @@ When running with docker-compose up ensure that you're using the --abort-on-cont
 LEVEL=High IMAGE=node:lts-slim docker-compose up --force-recreate --abort-on-container-exit
 ```
 
-docker cp ./cve-whitelist.yaml $(IMAGE=mmodevdexregistry.azurecr.io/sds-fa-service:690d45058aa7455bd3e626773fa1ab2761912e7d LEVEL=High docker-compose -f docker-compose-clair.yml ps -q clair-scanner):/tmp/cve-whitelist.yaml
-
 
 ### CircleCI
 
@@ -75,8 +73,9 @@ If you wish to whitelist using CircleCI and require the use of a docker executor
           command: |
             docker pull $DOCKER_IMAGE_NAME:$CIRCLE_SHA1
             curl https://raw.githubusercontent.com/kiseru-io/clair-sec-scanner/master/docker-compose.yml -o docker-compose.yml
-            docker cp ./cve-whitelist.yaml $(IMAGE=nginx:latest docker-compose ps -q clair-scanner):/tmp/cve-whitelist.yaml
-            IMAGE=$DOCKER_IMAGE_NAME:$CIRCLE_SHA1 WHITELIST=/tmp/cve-whitelist.yaml docker-compose up --abort-on-container-exit
+            IMAGE=$DOCKER_IMAGE_NAME:$CIRCLE_SHA1 WHITELIST=/tmp/cve-whitelist.yaml docker-compose up -d
+            docker cp ./cve-whitelist.yaml $(IMAGE=nginx:latest docker-compose ps -q timeout):/cfg/cve-whitelist.yaml
+            IMAGE=$DOCKER_IMAGE_NAME:$CIRCLE_SHA1 WHITELIST=/cfg/cve-whitelist.yaml docker-compose run clair-scanner
 
 ```
 
