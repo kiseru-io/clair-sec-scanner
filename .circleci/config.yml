@@ -9,7 +9,7 @@ jobs:
       - setup_remote_docker
       - run:
           name: Build and package toolkit 
-          command: docker build -t kiseruio/clair-sec-scanner:$CIRCLE_SHA1 -t kiseruio/clair-sec-scanner:latest -t  kiseruio/clair-sec-scanner:1.0.0 .
+          command: docker build -t kiseruio/clair-sec-scanner:$CIRCLE_SHA1 -t kiseruio/clair-sec-scanner:latest -t  kiseruio/clair-sec-scanner:1.1.0 .
       - run:
           name: DockerHub login
           command: echo $DOCKERHUB_PWD | docker login --username $DOCKERHUB_ID --password-stdin
