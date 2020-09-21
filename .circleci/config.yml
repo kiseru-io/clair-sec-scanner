@@ -15,7 +15,7 @@ jobs:
           command: echo $DOCKERHUB_PWD | docker login --username $DOCKERHUB_ID --password-stdin
       - run:
           name: Publish container to DockerHub
-          command: docker images && docker push $DOCKERHUB_ID/clair-sec-scanner:$CIRCLE_SHA1 && docker push kiseruio/clair-sec-scanner:latest && docker push kiseruio/clair-sec-scanner:1.0.0
+          command: docker images && docker push $DOCKERHUB_ID/clair-sec-scanner:$CIRCLE_SHA1 && docker push kiseruio/clair-sec-scanner:latest && docker push kiseruio/clair-sec-scanner:1.1.0
 
 workflows:
   version: 2
