@@ -1,4 +1,4 @@
-FROM debian:8-slim
+FROM debian:buster-20200720-slim
 
 MAINTAINER kiseru.io
 
@@ -15,10 +15,10 @@ RUN apt-get update && apt-get dist-upgrade -y && \
     apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D && \
     apt-get update && \
     apt-cache policy docker-engine && \
-    apt-get install --no-install-recommends --no-install-suggests docker-engine -y
+    apt-get install --no-install-recommends --no-install-suggests docker -y
 
 # add clair-scanner binary
-RUN curl -ksL https://github.com/arminc/clair-scanner/releases/download/v8/clair-scanner_linux_amd64 -o /usr/local/bin/clair-scanner && \
+RUN curl -ksL https://github.com/arminc/clair-scanner/releases/download/v12/clair-scanner_linux_amd64 -o /usr/local/bin/clair-scanner && \
     chmod +x /usr/local/bin/clair-scanner && touch /usr/local/default-whitelist.yaml
 
 # override with docker-compose
